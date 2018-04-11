@@ -7,16 +7,23 @@ package ui;
 
 import javax.swing.JOptionPane;
 import classe.Matriz;
+import javax.swing.JFrame;
+import javax.swing.table.DefaultTableModel;
 
 
 /**
  *
- * @author franzwagner
+ * @author Franzwagner Ternus
  */
 public class Tela extends javax.swing.JFrame {
-    
+
     Matriz matrizA = null;
     Matriz matrizB = null;
+    
+    JFrame janelaEscolhaMatriz = new JFrame();
+    String[] options = {"Matriz B", "Matriz A"};
+    
+//    int opcao = JOptionPane.showOptionDialog(frame.getContentPane(),"Qual matriz será utilizada?","Escolha a Matriz", 0,JOptionPane.QUESTION_MESSAGE,null,options,null);
 
     /**
      * Creates new form tela
@@ -114,7 +121,7 @@ public class Tela extends javax.swing.JFrame {
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addContainerGap()
                                 .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(campoEntradaQtdColunasMatrizA, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -198,7 +205,7 @@ public class Tela extends javax.swing.JFrame {
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addContainerGap()
                                 .addComponent(jLabel6)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(campoEntradaQtdColunasMatrizB, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
@@ -246,15 +253,20 @@ public class Tela extends javax.swing.JFrame {
         });
 
         botaoMatrizTransposta.setText("Matriz Transposta");
+        botaoMatrizTransposta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoMatrizTranspostaActionPerformed(evt);
+            }
+        });
 
-        botaoPotenciaMatriz.setText("Potenciação da Matriz A");
+        botaoPotenciaMatriz.setText("Potenciação da Matriz");
         botaoPotenciaMatriz.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botaoPotenciaMatrizActionPerformed(evt);
             }
         });
 
-        botaoMultiplicacaoMatrizAporK.setText("Multiplicação da Matriz A por K");
+        botaoMultiplicacaoMatrizAporK.setText("Multiplicação da Matriz por K");
         botaoMultiplicacaoMatrizAporK.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botaoMultiplicacaoMatrizAporKActionPerformed(evt);
@@ -385,25 +397,95 @@ public class Tela extends javax.swing.JFrame {
     }//GEN-LAST:event_campoEntradaQtdColunasMatrizAActionPerformed
 
     private void botaoCriarMatrizAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoCriarMatrizAActionPerformed
-        // Criar Matriz A 
+        // Criar Matriz A
         try{
             int qLinhas = Integer.parseInt(campoEntradaQtdLinhasMatrizA.getText());
             int qColunas = Integer.parseInt(campoEntradaQtdColunasMatrizA.getText());
-            
+
             matrizA = new Matriz(qLinhas, qColunas);
-            
+
             for(int l = 0; l < qLinhas; l++){
                 for(int c = 0; c < qColunas; c++){
                     String msg = "MATRIZ A [" + l + "][" + c + "]";
-                    
+
                     int elemento = Integer.parseInt(JOptionPane.showInputDialog(msg));
-                    
+
                     matrizA.setElemento(l, c, elemento);
                 }
             }
-            
+
             campoSaidaMatrizA.setText(matrizA.getMatriz());
+
+            // Imprime na tabela se é ou não triangular superior
+            if(matrizA.eTriangularSuperior() == true){
+                tabelaBool.setValueAt("SIM", 0, 1);
+            }else{
+                tabelaBool.setValueAt("NÃO", 0, 1);
+            }
             
+            // Imprime na tabela se é ou não triangular inferior
+            if(matrizA.eTriangularInferior() == true){
+                tabelaBool.setValueAt("SIM", 1, 1);
+            }else{
+                tabelaBool.setValueAt("NÃO", 1, 1);
+            }
+            
+            // Imprime na tabela se é ou não simetrica
+            if(matrizA.eSimetrica() == true){
+                tabelaBool.setValueAt("SIM", 2, 1);
+            }else{
+                tabelaBool.setValueAt("NÃO", 2, 1);
+            }
+            
+            // Imprime na tabela se é ou não identidade
+            if(matrizA.eIdentidade() == true){
+                tabelaBool.setValueAt("SIM", 3, 1);
+            }else{
+                tabelaBool.setValueAt("NÃO", 3, 1);
+            }
+            
+            // Imprime na tabela se é ou não ortogonal
+            if(matrizA.eOrtogonal() == true){
+                tabelaBool.setValueAt("SIM", 4, 1);
+            }else{
+                tabelaBool.setValueAt("NÃO", 4, 1);
+            }
+            
+            // Imprime na tabela se é ou não de permutação
+            if(matrizA.ePermutacao() == true){
+                tabelaBool.setValueAt("SIM", 5, 1);
+            }else{
+                tabelaBool.setValueAt("NÃO", 5, 1);
+            }
+            
+            // Imprime na tabela se são ou não iguais
+            if(matrizB == null){
+                tabelaBool.setValueAt("MATRIZ B INEXISTENTE", 6, 1);
+                tabelaBool.setValueAt("MATRIZ B INEXISTENTE", 6, 2);
+            }else{
+                if(matrizA.eIgual(matrizB) == true){
+                    tabelaBool.setValueAt("SIM", 6, 1);
+                    tabelaBool.setValueAt("SIM", 6, 2);
+                }else{
+                    tabelaBool.setValueAt("NÃO", 6, 1);
+                    tabelaBool.setValueAt("NÃO", 6, 2);
+                }
+            }
+            
+            // Imprime na tabela se são ou não diferentes
+            if(matrizB == null){
+                tabelaBool.setValueAt("MATRIZ B INEXISTENTE", 7, 1);
+                tabelaBool.setValueAt("MATRIZ B INEXISTENTE", 7, 2);
+            }else{
+                if(matrizA.eDiferente(matrizB) == true){
+                    tabelaBool.setValueAt("SIM", 7, 1);
+                    tabelaBool.setValueAt("SIM", 7, 2);
+                }else{
+                    tabelaBool.setValueAt("NÃO", 7, 1);
+                    tabelaBool.setValueAt("NÃO", 7, 2);
+                }
+            }
+
         } catch(Exception erro) {
             JOptionPane.showMessageDialog(rootPane, erro.getMessage());
         }
@@ -414,21 +496,91 @@ public class Tela extends javax.swing.JFrame {
         try{
             int qLinhas = Integer.parseInt(campoEntradaQtdLinhasMatrizB.getText());
             int qColunas = Integer.parseInt(campoEntradaQtdColunasMatrizB.getText());
-            
+
             matrizB = new Matriz(qLinhas, qColunas);
-            
+
             for(int l = 0; l < qLinhas; l++){
                 for(int c = 0; c < qColunas; c++){
                     String msg = "MATRIZ B [" + l + "][" + c + "]";
-                    
+
                     int elemento = Integer.parseInt(JOptionPane.showInputDialog(msg));
-                    
+
                     matrizB.setElemento(l, c, elemento);
                 }
             }
-            
+
             campoSaidaMatrizB.setText(matrizB.getMatriz());
             
+            // Imprime na tabela se é ou não triangular superior
+            if(matrizB.eTriangularSuperior() == true){
+                tabelaBool.setValueAt("SIM", 0, 2);
+            }else{
+                tabelaBool.setValueAt("NÃO", 0, 2);
+            }
+            
+            // Imprime na tabela se é ou não triangular inferior
+            if(matrizB.eTriangularInferior() == true){
+                tabelaBool.setValueAt("SIM", 1, 2);
+            }else{
+                tabelaBool.setValueAt("NÃO", 1, 2);
+            }
+            
+            // Imprime na tabela se é ou não simetrica
+            if(matrizB.eSimetrica() == true){
+                tabelaBool.setValueAt("SIM", 2, 2);
+            }else{
+                tabelaBool.setValueAt("NÃO", 2, 2);
+            }
+            
+            // Imprime na tabela se é ou não identidade
+            if(matrizB.eIdentidade() == true){
+                tabelaBool.setValueAt("SIM", 3, 2);
+            }else{
+                tabelaBool.setValueAt("NÃO", 3, 2);
+            }
+            
+            // Imprime na tabela se é ou não ortogonal
+            if(matrizB.eOrtogonal() == true){
+                tabelaBool.setValueAt("SIM", 4, 2);
+            }else{
+                tabelaBool.setValueAt("NÃO", 4, 2);
+            }
+            
+            // Imprime na tabela se é ou não de permutação
+            if(matrizB.ePermutacao() == true){
+                tabelaBool.setValueAt("SIM", 5, 2);
+            }else{
+                tabelaBool.setValueAt("NÃO", 5, 2);
+            }
+            
+            // Imprime na tabela se são ou não iguais
+            if(matrizA == null){
+                tabelaBool.setValueAt("MATRIZ A INEXISTENTE", 6, 1);
+                tabelaBool.setValueAt("MATRIZ A INEXISTENTE", 6, 2);
+            }else{
+                if(matrizB.eIgual(matrizA) == true){
+                    tabelaBool.setValueAt("SIM", 6, 1);
+                    tabelaBool.setValueAt("SIM", 6, 2);
+                }else{
+                    tabelaBool.setValueAt("NÃO", 6, 1);
+                    tabelaBool.setValueAt("NÃO", 6, 2);
+                }
+            }
+            
+            // Imprime na tabela se são ou não diferentes
+            if(matrizA == null){
+                tabelaBool.setValueAt("MATRIZ A INEXISTENTE", 7, 1);
+                tabelaBool.setValueAt("MATRIZ A INEXISTENTE", 7, 2);
+            }else{
+                if(matrizB.eDiferente(matrizA) == true){
+                    tabelaBool.setValueAt("SIM", 7, 1);
+                    tabelaBool.setValueAt("SIM", 7, 2);
+                }else{
+                    tabelaBool.setValueAt("NÃO", 7, 1);
+                    tabelaBool.setValueAt("NÃO", 7, 2);
+                }
+            }
+
         } catch(Exception erro) {
             JOptionPane.showMessageDialog(rootPane, erro.getMessage());
         }
@@ -445,9 +597,9 @@ public class Tela extends javax.swing.JFrame {
     private void botaoSomaMatrizesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoSomaMatrizesActionPerformed
         try{
             Matriz matrizAdicao = matrizA.adicionar(matrizB);
-            
+
             campoSaidaOperacao.setText(matrizAdicao.getMatriz());
-            
+
         } catch(Exception erro) {
             JOptionPane.showMessageDialog(rootPane, erro.getMessage());
         }
@@ -456,27 +608,89 @@ public class Tela extends javax.swing.JFrame {
     private void botaoSubtracaoMatrizesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoSubtracaoMatrizesActionPerformed
         try{
             Matriz matrizSubtracao = matrizA.subtrair(matrizB);
-            
+
             campoSaidaOperacao.setText(matrizSubtracao.getMatriz());
-            
+
         } catch(Exception erro) {
             JOptionPane.showMessageDialog(rootPane, erro.getMessage());
         }
-    }      
     }//GEN-LAST:event_botaoSubtracaoMatrizesActionPerformed
 
     private void botaoMultiplicacaoMatrizesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoMultiplicacaoMatrizesActionPerformed
-        // TODO add your handling code here:
+        try{
+            Matriz matrizMultiplicacao = matrizA.multiplicar(matrizB);
+            
+            campoSaidaOperacao.setText(matrizMultiplicacao.getMatriz());
+            
+        }catch(Exception erro){
+            JOptionPane.showMessageDialog(rootPane, erro.getMessage());
+        }
     }//GEN-LAST:event_botaoMultiplicacaoMatrizesActionPerformed
 
     private void botaoPotenciaMatrizActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoPotenciaMatrizActionPerformed
-        // TODO add your handling code here:
+        try{
+            int opcao = JOptionPane.showOptionDialog(janelaEscolhaMatriz.getContentPane(),"Qual matriz será utilizada?","Escolha a Matriz", 0,JOptionPane.QUESTION_MESSAGE,null,options,null);
+            
+            if(opcao == 1) {
+                int potencia = Integer.parseInt(JOptionPane.showInputDialog(rootPane, "Entre com o valor da potencia:"));
+                
+                Matriz matrizPotencia = matrizA.calcularPotencia(potencia);
+
+                campoSaidaOperacao.setText(matrizPotencia.getMatriz());
+            }
+            else{
+                int potencia = Integer.parseInt(JOptionPane.showInputDialog(rootPane, "Entre com o valor da potencia:"));
+                
+                Matriz matrizPotencia = matrizB.calcularPotencia(potencia);
+
+                campoSaidaOperacao.setText(matrizPotencia.getMatriz());
+            }
+
+        } catch(Exception erro) {
+            JOptionPane.showMessageDialog(rootPane, erro.getMessage());
+        }
     }//GEN-LAST:event_botaoPotenciaMatrizActionPerformed
 
     private void botaoMultiplicacaoMatrizAporKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoMultiplicacaoMatrizAporKActionPerformed
-        // TODO add your handling code here:
+        try{
+            int opcao = JOptionPane.showOptionDialog(janelaEscolhaMatriz.getContentPane(),"Qual matriz será utilizada?","Escolha a Matriz", 0,JOptionPane.QUESTION_MESSAGE,null,options,null);
+            
+            if(opcao == 1) {
+                Matriz matrizTransposta = matrizA.calcularTransposta(matrizA);
+
+                campoSaidaOperacao.setText(matrizTransposta.getMatriz());
+            }
+            else{
+                Matriz matrizTransposta = matrizB.calcularTransposta(matrizB);
+
+                campoSaidaOperacao.setText(matrizTransposta.getMatriz());
+            }
+
+        } catch(Exception erro) {
+            JOptionPane.showMessageDialog(rootPane, erro.getMessage());
+        }
     }//GEN-LAST:event_botaoMultiplicacaoMatrizAporKActionPerformed
 
+    private void botaoMatrizTranspostaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoMatrizTranspostaActionPerformed
+        try{
+            int opcao = JOptionPane.showOptionDialog(janelaEscolhaMatriz.getContentPane(),"Qual matriz será utilizada?","Escolha a Matriz", 0,JOptionPane.QUESTION_MESSAGE,null,options,null);
+            
+            if(opcao == 1) {
+                Matriz matrizTransposta = matrizA.calcularTransposta(matrizA);
+
+                campoSaidaOperacao.setText(matrizTransposta.getMatriz());
+            }
+            else{
+                Matriz matrizTransposta = matrizB.calcularTransposta(matrizB);
+
+                campoSaidaOperacao.setText(matrizTransposta.getMatriz());
+            }
+
+        } catch(Exception erro) {
+            JOptionPane.showMessageDialog(rootPane, erro.getMessage());
+        }
+    }//GEN-LAST:event_botaoMatrizTranspostaActionPerformed
+ 
     /**
      * @param args the command line arguments
      */
@@ -484,7 +698,7 @@ public class Tela extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -494,13 +708,13 @@ public class Tela extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(tela.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Tela.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(tela.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Tela.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(tela.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Tela.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(tela.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Tela.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
